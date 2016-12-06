@@ -2,7 +2,10 @@ import 'babel-polyfill'
 import React from 'react'
 import { render as renderReact } from 'react-dom'
 import debounce from 'debounce'
+import injectTapEventPlugin from 'react-tap-event-plugin'
 import configureStore from './store/configureStore'
+
+injectTapEventPlugin()
 
 const state = JSON.parse(localStorage.getItem('state'))
 const store = configureStore(state || {})
