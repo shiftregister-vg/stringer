@@ -2,13 +2,33 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hugo Writer</title>
+    <title>Stringer</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <div id="root">
+
+      <!-- This is all going to be replaced once the application loads -->
+      <link rel="stylesheet" href="static/loading.css" />
+      <div class="spinner">
+        <div class='uil-ripple-css' style='transform:scale(0.99);'><div></div><div></div></div>
+      </div>
+      <!-- end loading spinner -->
+
+    </div>
+    <script>
+      (function(){
+        const {ipcRenderer} = require('electron')
+
+        ipcRenderer.on('fetched-project-list', (event, arg) => {
+          console.log('args', arg)
+        })
+        ipcRenderer.send('get-project-list','Word up!')
+
+        const script = document.createElement('script')
+        const srcPath = process.env.ENV === 'development' ? 'http://localhost:9000' : '.'
+        script.src = srcPath + '/dist/bundle.js'
+        document.write(script.outerHTML)
+      }())
+    </script>
   </body>
 </html>

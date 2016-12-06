@@ -1,8 +1,12 @@
-const electron = require('electron')
+import electron, { ipcMain } from 'electron'
+import { initDatabase } from './database-config'
 // Module to control application life.
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
+
+// init the projects database
+let db = initDatabase()
 
 const path = require('path')
 const url = require('url')
@@ -23,7 +27,7 @@ function createWindow () {
   }))
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -58,3 +62,9 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.on('get-project-list', (event, arg) => {
+  console.log(arg)
+  let projects = db.getCollection('projects')
+  event.sender.send('fetched-project-list', projects)
+})

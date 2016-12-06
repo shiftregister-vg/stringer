@@ -2,9 +2,11 @@
   "name": "Stringer",
   "version": "1.0.0",
   "description": "An easy to use WYSIWYG for Hugo projects",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "ENV=development electron .",
+    "dev": "concurrently -k 'babel-node server.js' 'npm start'",
+    "build": "webpack --config webpack.config.production.js && electron-packager . HackerNews --platform=darwin --arch=all --prune --overwrite --icon ./stringer_icon"
   },
   "repository": "https://github.com/stevegood/stringer",
   "keywords": [
@@ -38,6 +40,7 @@
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
-    "electron-prebuilt": "^1.4.10"
+    "electron-prebuilt": "^1.4.10",
+    "lokijs": "^1.4.1"
   }
 }
