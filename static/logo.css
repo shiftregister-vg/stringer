@@ -1,21 +1,46 @@
-html, body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
+.logo {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: flex-start;
 }
 
-.uil-ripple-css {
+.stringer-logo {
   background: none;
   position: relative;
-  width: 350px;
-  height: 350px;
+  width: 48px;
+  height: 48px;
+  transform: scale(0.9);
 }
 
-.uil-ripple-css div {
+.stringer-logo.sm {
+  width: 36px;
+  height: 36px;
+  transform: scale(0.5);
+}
+
+.stringer-logo.md {
+  width: 48px;
+  height: 48px;
+  transform: scale(0.7);
+}
+
+.stringer-logo.lg {
+  width: 72px;
+  height: 72px;
+  transform: scale(0.8)
+}
+
+.stringer-logo.xl {
+  width: 144px;
+  height: 144px;
+}
+
+.stringer-logo.xxl {
+  width: 288px;
+  height: 288px;
+}
+
+.stringer-logo div {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -26,14 +51,14 @@ html, body {
   border-radius: 50%;
   border-width: 8px;
   border-style: none inset none outset;
-  -ms-animation: uil-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
-  -moz-animation: uil-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
-  -webkit-animation: uil-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
-  -o-animation: uil-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
-  animation: uil-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
+  -ms-animation: stringer-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
+  -moz-animation: stringer-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
+  -webkit-animation: stringer-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
+  -o-animation: stringer-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
+  animation: stringer-ripple 2s cubic-bezier(0.250, 0.250, 0.750, 0.750) infinite;
 }
 
-.uil-ripple-css div:nth-of-type(1) {
+.stringer-logo div:nth-of-type(1) {
   border-color: #763FBF;
   -ms-animation-delay: 1.27s;
   -moz-animation-delay: 1.27s;
@@ -42,7 +67,7 @@ html, body {
   animation-delay: 1.27s;
 }
 
-.uil-ripple-css div:nth-of-type(2) {
+.stringer-logo div:nth-of-type(2) {
   border-color: #4E63D1;
   -ms-animation-delay: 1.18s;
   -moz-animation-delay: 1.18s;
@@ -51,7 +76,7 @@ html, body {
   animation-delay: 1.18s;
 }
 
-.uil-ripple-css div:nth-of-type(3) {
+.stringer-logo div:nth-of-type(3) {
   border-color: #2788E4;
   -ms-animation-delay: 1.09s;
   -moz-animation-delay: 1.09s;
@@ -60,7 +85,7 @@ html, body {
   animation-delay: 1.09s;
 }
 
-.uil-ripple-css div:nth-of-type(4) {
+.stringer-logo div:nth-of-type(4) {
   border-color: #00ADF7;
   -ms-animation-delay: 1s;
   -moz-animation-delay: 1s;
@@ -69,7 +94,7 @@ html, body {
   animation-delay: 1s;
 }
 
-@-webkit-keyframes uil-ripple {
+@-webkit-keyframes stringer-ripple {
   0% {
     width: 0;
     height: 0;
@@ -89,7 +114,7 @@ html, body {
     opacity: 0;
   }
 }
-@-webkit-keyframes uil-ripple {
+@-webkit-keyframes stringer-ripple {
   0% {
     width: 0;
     height: 0;
@@ -109,7 +134,7 @@ html, body {
     opacity: 0;
   }
 }
-@-moz-keyframes uil-ripple {
+@-moz-keyframes stringer-ripple {
   0% {
     width: 0;
     height: 0;
@@ -129,7 +154,7 @@ html, body {
     opacity: 0;
   }
 }
-@-ms-keyframes uil-ripple {
+@-ms-keyframes stringer-ripple {
   0% {
     width: 0;
     height: 0;
@@ -149,7 +174,7 @@ html, body {
     opacity: 0;
   }
 }
-@-moz-keyframes uil-ripple {
+@-moz-keyframes stringer-ripple {
   0% {
     width: 0;
     height: 0;
@@ -169,7 +194,7 @@ html, body {
     opacity: 0;
   }
 }
-@-webkit-keyframes uil-ripple {
+@-webkit-keyframes stringer-ripple {
   0% {
     width: 0;
     height: 0;
@@ -189,7 +214,7 @@ html, body {
     opacity: 0;
   }
 }
-@-o-keyframes uil-ripple {
+@-o-keyframes stringer-ripple {
   0% {
     width: 0;
     height: 0;
@@ -209,7 +234,7 @@ html, body {
     opacity: 0;
   }
 }
-@keyframes uil-ripple {
+@keyframes stringer-ripple {
   0% {
     width: 0;
     height: 0;

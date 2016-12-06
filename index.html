@@ -3,14 +3,15 @@
   <head>
     <meta charset="UTF-8">
     <title>Stringer</title>
+    <link rel="stylesheet" href="static/main.css" />
+    <link rel="stylesheet" href="static/logo.css" />
   </head>
   <body>
     <div id="root">
 
       <!-- This is all going to be replaced once the application loads -->
-      <link rel="stylesheet" href="static/loading.css" />
-      <div class="spinner">
-        <div class='uil-ripple-css' style='transform:scale(0.99);'>
+      <div class="flex-center">
+        <div class='stringer-logo xxl'>
           <div></div>
           <div></div>
           <div></div>
@@ -21,13 +22,11 @@
 
     </div>
     <script>
-      // const {ipcRenderer} = require('electron')
-      // (function(){
-      //   const script = document.createElement('script')
-      //   const srcPath = process.env.ENV === 'development' ? 'http://localhost:9000' : '.'
-      //   script.src = srcPath + '/dist/bundle.js'
-      //   document.write(script.outerHTML)
-      // }())
+      const {ipcRenderer} = require('electron')
+      const script = document.createElement('script')
+      const srcPath = process.env.ENV === 'development' ? 'http://localhost:9000' : '.'
+      script.src = srcPath + '/dist/bundle.js'
+      setTimeout(() => document.head.appendChild(script), 5000)
     </script>
   </body>
 </html>
