@@ -44,6 +44,7 @@
     "electron-prebuilt": "^1.4.10",
     "lokijs": "^1.4.1",
     "material-ui": "^0.16.4",
-    "react-tap-event-plugin": "^2.0.1"
+    "react-tap-event-plugin": "^2.0.1",
+    "react-treebeard": "^1.1.4"
   }
 }

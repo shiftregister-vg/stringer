@@ -1,7 +1,6 @@
-import electron, { ipcMain } from 'electron'
+import electron, { app, dialog, globalShortcut, ipcMain } from 'electron'
 import { initDatabase } from './database-config'
 // Module to control application life.
-const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
@@ -11,13 +10,47 @@ let db = initDatabase()
 const path = require('path')
 const url = require('url')
 
+const registerGlobalShortcuts = (win) => {
+  globalShortcut.register('CmdOrCtrl+N', () => {
+    win.webContents.send('create-new-file')
+  })
+
+  globalShortcut.register('CmdOrCtrl+O', () => {
+    selectProjectDirectory(win)
+  })
+
+  globalShortcut.register('CmdOrCtrl+Shift+B', () => {
+    console.log('Should invoke Hugo to build project...')
+  })
+}
+
+const selectProjectDirectory = (win) => {
+  dialog.showOpenDialog(win, {properties: ['openDirectory']}, (selectedDirs) => {
+    let selectedDir = ''
+    if (selectedDirs && selectedDirs.length === 1) {
+      selectedDir = selectedDirs[0]
+    }
+
+    win.webContents.send('project-directory-selected', selectedDir)
+  })
+}
+
+const unregisterGlobalShortcuts = () => {
+  globalShortcut.unregisterAll()
+}
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function createWindow () {
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1024, height: 800})
+
+  registerGlobalShortcuts(mainWindow)
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -38,15 +71,10 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
-}
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+})
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
@@ -54,7 +82,11 @@ app.on('window-all-closed', function () {
   }
 })
 
-app.on('activate', function () {
+app.on('will-quit', () => {
+  unregisterGlobalShortcuts()
+})
+
+app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
@@ -69,4 +101,8 @@ ipcMain.on('get-project-list', (event, arg) => {
   console.log(arg)
   let projects = db.getCollection('projects')
   event.sender.send('fetched-project-list', projects)
+})
+
+ipcMain.on('open-a-project', (event, arg) => {
+  selectProjectDirectory(mainWindow)
 })

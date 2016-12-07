@@ -2,16 +2,25 @@ import React from 'react'
 import classnames from 'classnames'
 
 const Logo = (props) => {
-  let classes = classnames('stringer-logo', {
-    sm: props.sm,
-    md: props.md,
-    lg: props.lg,
-    xl: props.xl,
-    xxl: props.xxl
+  let p = {...props}
+  const { sm, md, lg, xl, xxl } = p
+
+  delete p.sm
+  delete p.md
+  delete p.lg
+  delete p.xl
+  delete p.xxl
+
+  const classes = classnames('stringer-logo', {
+    sm: sm,
+    md: md,
+    lg: lg,
+    xl: xl,
+    xxl: xxl
   })
 
   return (
-    <div className={classes} {...props}>
+    <div className={classes} {...p}>
       <div></div>
       <div></div>
       <div></div>
