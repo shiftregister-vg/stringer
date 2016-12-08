@@ -1,6 +1,10 @@
 import React from 'react'
 import { MuiThemeProvider, getMuiTheme } from 'material-ui/styles'
 import { AppBar } from 'material-ui'
+import { ContentState, EditorState } from 'draft-js'
+import { stateFromMarkdown } from 'draft-js-import-markdown'
+
+
 import DefaultTheme from '../../themes/stringer-default'
 import Logo from '../logo'
 import { MainLeftDrawer } from '../navigation'
@@ -32,10 +36,13 @@ export default class App extends React.Component {
 
     this.state = {
       selectedProjectPath: null,
-      project: {path: '', name: ''},
+      project: {path: '', name: '', contentTree: {}},
       menuOpen: false,
       newFileDialogOpen: false,
-      browseForProjectDialogOpen: false
+      browseForProjectDialogOpen: false,
+      openFile: null,
+      editorState: EditorState.createEmpty(),
+      contentDirty: false
     }
 
     this.openLeftMenu = this.openLeftMenu.bind(this)
@@ -45,17 +52,21 @@ export default class App extends React.Component {
     this.handleOpenAProject = this.handleOpenAProject.bind(this)
     this.handleNewFileDialogRequestClose = this.handleNewFileDialogRequestClose.bind(this)
     this.handleProjectDirectorySelected = this.handleProjectDirectorySelected.bind(this)
+    this.onFileTreeToggle = this.onFileTreeToggle.bind(this)
+    this.handleFileOpened = this.handleFileOpened.bind(this)
+    this.handleEditorChange = this.handleEditorChange.bind(this)
+    this.saveContent = this.saveContent.bind(this)
   }
 
-  componentDidMount() {
+  componentWillMount() {
     // ipc event handlers
     ipcRenderer.on('create-new-file', this.handleCreateNewFile)
     ipcRenderer.on('project-directory-selected', this.handleProjectDirectorySelected)
+    ipcRenderer.on('file-opened', this.handleFileOpened)
   }
 
   componentWillUnmount() {
-    ipcRenderer.removeListener('create-new-file', this.handleCreateNewFile)
-    ipcRenderer.removeListener('project-directory-selected', this.handleProjectDirectorySelected)
+    ipcRenderer.removeAll()
   }
 
   handleCreateNewFile() {
@@ -73,13 +84,14 @@ export default class App extends React.Component {
     }
   }
 
-  handleProjectDirectorySelected(event, directoryPath) {
+  handleProjectDirectorySelected(event, directoryPath, contentTree) {
     this.setState({
       browseForProjectDialogOpen: false,
       selectedProjectPath: directoryPath,
       project: {
         path: directoryPath,
-        name: this.getProjectName(directoryPath)
+        name: this.getProjectName(directoryPath),
+        contentTree
       }
     })
     this.closeDrawer()
@@ -108,6 +120,42 @@ export default class App extends React.Component {
     return parts[parts.length - 1]
   }
 
+  onFileTreeToggle(node, toggled){
+    if(this.state.cursor){
+      this.state.cursor.active = false
+    }
+
+    node.active = true
+
+    if(node.children){
+      node.toggled = toggled
+    }
+
+    let openFile = this.state.openFile
+    if (node.extension){
+      openFile = node
+      ipcRenderer.send('open-file', node.path)
+    }
+
+    this.setState({ cursor: node, openFile });
+  }
+
+  handleFileOpened(event, openFileContents) {
+    this.setState({
+      contentDirty: false,
+      editorState: EditorState.createWithContent(stateFromMarkdown(openFileContents))
+    })
+  }
+
+  handleEditorChange(editorState) {
+    this.setState({editorState, contentDirty: true})
+  }
+
+  saveContent() {
+    console.log('Saving content')
+    this.setState({contentDirty: false})
+  }
+
   render() {
     const logo = <Logo md style={styles.logo} />
 
@@ -132,7 +180,14 @@ export default class App extends React.Component {
             open={this.state.newFileDialogOpen}
             onRequestClose={this.handleNewFileDialogRequestClose} />
 
-          <EditorFrame project={this.state.project} />
+          <EditorFrame
+            project={this.state.project}
+            onToggle={this.onFileTreeToggle}
+            openFile={this.state.openFile}
+            editorState={this.state.editorState}
+            contentDirty={this.state.contentDirty}
+            save={this.saveContent}
+            onEditorChange={this.handleEditorChange} />
         </div>
       </MuiThemeProvider>
     )

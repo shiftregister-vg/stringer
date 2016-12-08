@@ -34,7 +34,7 @@ store.subscribe(() => {
   saveState()
   render(App)
   if (process.env.ENV === 'development') {
-    console.log('state', store.getState())
+    // console.log('state', store.getState())
   }
 })
 

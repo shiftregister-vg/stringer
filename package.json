@@ -17,7 +17,7 @@
   "author": "Steve Good",
   "license": "ISC",
   "devDependencies": {
-    "babel-loader": "^6.2.8",
+    "babel-loader": "^6.2.9",
     "babel-polyfill": "^6.16.0",
     "concurrently": "^3.1.0",
     "css-loader": "^0.26.1",
@@ -30,7 +30,7 @@
     "redux": "^3.6.0",
     "redux-saga": "^0.13.0",
     "style-loader": "^0.13.1",
-    "webpack": "^1.13.3",
+    "webpack": "^1.14.0",
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.2",
     "webpack-target-electron-renderer": "^0.4.0"
@@ -41,6 +41,10 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "classnames": "^2.2.5",
+    "directory-tree": "^1.1.1",
+    "draft-js": "^0.9.1",
+    "draft-js-export-markdown": "^0.2.2",
+    "draft-js-import-markdown": "^0.2.1",
     "electron-prebuilt": "^1.4.10",
     "lokijs": "^1.4.1",
     "material-ui": "^0.16.4",

@@ -1,5 +1,7 @@
+import fs from 'fs'
 import electron, { app, dialog, globalShortcut, ipcMain } from 'electron'
 import { initDatabase } from './database-config'
+import dirTree from 'directory-tree'
 // Module to control application life.
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
@@ -27,11 +29,13 @@ const registerGlobalShortcuts = (win) => {
 const selectProjectDirectory = (win) => {
   dialog.showOpenDialog(win, {properties: ['openDirectory']}, (selectedDirs) => {
     let selectedDir = ''
+    let contentTree = {}
     if (selectedDirs && selectedDirs.length === 1) {
       selectedDir = selectedDirs[0]
+      contentTree = dirTree(`${selectedDir}/content`)
     }
 
-    win.webContents.send('project-directory-selected', selectedDir)
+    win.webContents.send('project-directory-selected', selectedDir, contentTree)
   })
 }
 
@@ -105,4 +109,15 @@ ipcMain.on('get-project-list', (event, arg) => {
 
 ipcMain.on('open-a-project', (event, arg) => {
   selectProjectDirectory(mainWindow)
+})
+
+ipcMain.on('open-file', (event, filePath) => {
+  const file = fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      // do something about the error, maybe an new event?
+      event.sender.send('error-opening-file', err, filePath)
+    } else {
+      event.sender.send('file-opened', data)
+    }
+  })
 })
