@@ -1,11 +1,23 @@
 import React, { Component } from 'react'
 import { Paper } from 'material-ui'
 import { Treebeard } from 'react-treebeard'
-import editorFrameStyles from './editorFrameStyles'
+import editorFrameStyles from './editor-frame-styles'
 import ContentEditor from './content-editor'
 
 const EditorFrame = (props) => {
-  const { project, onToggle, openFile, editorState } = props
+  const {
+    project,
+    onToggle,
+    openFile,
+    editorState,
+    save,
+    contentDirty,
+    onEditorChange,
+    contentMetaData,
+    onTagDelete,
+    onTagAdd
+  } = props
+
   if (project.path === '') {
     return <div/>
   }
@@ -19,13 +31,15 @@ const EditorFrame = (props) => {
           onToggle={onToggle} />
       </Paper>
 
-      <Paper style={editorFrameStyles.editor} zDepth={3}>
-        <ContentEditor
-          editorState={editorState}
-          dirty={props.contentDirty}
-          save={props.save}
-          onChange={props.onEditorChange} />
-      </Paper>
+      <ContentEditor
+        editorState={editorState}
+        contentMetaData={contentMetaData}
+        dirty={contentDirty}
+        save={save}
+        onChange={onEditorChange}
+        onTagDelete={onTagDelete}
+        onTagAdd={onTagAdd}/>
+
     </div>
   )
 }

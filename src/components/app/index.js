@@ -2,8 +2,10 @@ import React from 'react'
 import { MuiThemeProvider, getMuiTheme } from 'material-ui/styles'
 import { AppBar } from 'material-ui'
 import { ContentState, EditorState } from 'draft-js'
-import { stateFromMarkdown } from 'draft-js-import-markdown'
-
+import marked from 'marked'
+import { stateFromHTML } from 'draft-js-import-html'
+import { stateToMarkdown } from 'draft-js-export-markdown'
+import YAML from 'yamljs'
 
 import DefaultTheme from '../../themes/stringer-default'
 import Logo from '../logo'
@@ -13,8 +15,12 @@ import { EditorFrame } from '../editor'
 
 const styles = {
   app: {
-    width: '100%',
-    height: '100%'
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left:0,
+    overflow: 'hidden'
   },
   appBar: {
     position: 'fixed'
@@ -42,41 +48,37 @@ export default class App extends React.Component {
       browseForProjectDialogOpen: false,
       openFile: null,
       editorState: EditorState.createEmpty(),
-      contentDirty: false
+      contentDirty: false,
+      contentMetaData: {
+        title: '',
+        description: '',
+        tags: [],
+        draft: true
+      }
     }
 
-    this.openLeftMenu = this.openLeftMenu.bind(this)
-    this.closeDrawer = this.closeDrawer.bind(this)
-    this.handleRequestChange = this.handleRequestChange.bind(this)
-    this.handleCreateNewFile = this.handleCreateNewFile.bind(this)
-    this.handleOpenAProject = this.handleOpenAProject.bind(this)
-    this.handleNewFileDialogRequestClose = this.handleNewFileDialogRequestClose.bind(this)
-    this.handleProjectDirectorySelected = this.handleProjectDirectorySelected.bind(this)
-    this.onFileTreeToggle = this.onFileTreeToggle.bind(this)
-    this.handleFileOpened = this.handleFileOpened.bind(this)
-    this.handleEditorChange = this.handleEditorChange.bind(this)
-    this.saveContent = this.saveContent.bind(this)
+    ipcRenderer.send('app-ready')
   }
 
-  componentWillMount() {
+  componentWillMount = () => {
     // ipc event handlers
     ipcRenderer.on('create-new-file', this.handleCreateNewFile)
     ipcRenderer.on('project-directory-selected', this.handleProjectDirectorySelected)
     ipcRenderer.on('file-opened', this.handleFileOpened)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     ipcRenderer.removeAll()
   }
 
-  handleCreateNewFile() {
+  handleCreateNewFile = () => {
     let {newFileDialogOpen, browseForProjectDialogOpen} = this.state
     if (!newFileDialogOpen && !browseForProjectDialogOpen) {
       this.setState({newFileDialogOpen: true})
     }
   }
 
-  handleOpenAProject() {
+  handleOpenAProject = () => {
     let {newFileDialogOpen, browseForProjectDialogOpen} = this.state
     if (!newFileDialogOpen && !browseForProjectDialogOpen) {
       ipcRenderer.send('open-a-project')
@@ -84,7 +86,7 @@ export default class App extends React.Component {
     }
   }
 
-  handleProjectDirectorySelected(event, directoryPath, contentTree) {
+  handleProjectDirectorySelected = (event, directoryPath, contentTree) => {
     this.setState({
       browseForProjectDialogOpen: false,
       selectedProjectPath: directoryPath,
@@ -97,30 +99,30 @@ export default class App extends React.Component {
     this.closeDrawer()
   }
 
-  handleNewFileDialogRequestClose(event) {
+  handleNewFileDialogRequestClose = (event) => {
     this.setState({newFileDialogOpen: false})
     this.closeDrawer()
   }
 
-  openLeftMenu() {
+  openLeftMenu = () => {
     this.setState({menuOpen: true})
   }
 
-  closeDrawer() {
+  closeDrawer = () => {
     this.setState({menuOpen: false})
   }
 
-  handleRequestChange(menuOpen) {
+  handleRequestChange = (menuOpen) => {
     this.setState({menuOpen})
   }
 
-  getProjectName(path) {
+  getProjectName = (path) => {
     if (path === '') return ''
     const parts = path.split('/')
     return parts[parts.length - 1]
   }
 
-  onFileTreeToggle(node, toggled){
+  onFileTreeToggle = (node, toggled) => {
     if(this.state.cursor){
       this.state.cursor.active = false
     }
@@ -140,20 +142,49 @@ export default class App extends React.Component {
     this.setState({ cursor: node, openFile });
   }
 
-  handleFileOpened(event, openFileContents) {
+  handleFileOpened = (event, openFileContents) => {
+    let contentMetaData
+    const isYaml = openFileContents.startsWith('---')
+
+    if (isYaml) {
+      const contentParts = openFileContents.split('---')
+      contentMetaData = YAML.parse(contentParts[1])
+      openFileContents = contentParts[2]
+    }
+
+    let content = stateFromHTML(marked(openFileContents))
     this.setState({
       contentDirty: false,
-      editorState: EditorState.createWithContent(stateFromMarkdown(openFileContents))
+      editorState: EditorState.createWithContent(content),
+      contentMetaData
     })
   }
 
-  handleEditorChange(editorState) {
+  handleEditorChange = (editorState) => {
     this.setState({editorState, contentDirty: true})
   }
 
-  saveContent() {
-    console.log('Saving content')
+  saveContent = () => {
+    const { editorState } = this.state
+    const markdown = stateToMarkdown(editorState.getCurrentContent())
     this.setState({contentDirty: false})
+  }
+
+  handleTagDelete = (label) => {
+    let contentMetaData = this.state.contentMetaData
+    const tagToDelete = contentMetaData.tags.indexOf(label)
+    contentMetaData.tags.splice(tagToDelete, 1)
+    this.setState({contentMetaData})
+  }
+
+  handleTagAdd = () => {
+    // todo: open a dialog to collect tag info
+  }
+
+  handleNewTagWindowDone = (label) => {
+    let contentMetaData = this.state.contentMetaData
+    contentMetaData.tags.push(label)
+    this.setState({contentMetaData})
   }
 
   render() {
@@ -185,9 +216,12 @@ export default class App extends React.Component {
             onToggle={this.onFileTreeToggle}
             openFile={this.state.openFile}
             editorState={this.state.editorState}
+            contentMetaData={this.state.contentMetaData}
             contentDirty={this.state.contentDirty}
             save={this.saveContent}
-            onEditorChange={this.handleEditorChange} />
+            onEditorChange={this.handleEditorChange}
+            onTagDelete={this.handleTagDelete}
+            onTagAdd={this.handleTagAdd} />
         </div>
       </MuiThemeProvider>
     )

@@ -1,4 +1,4 @@
-import EditorFrame from './EditorFrame'
+import EditorFrame from './editor-frame'
 
 export {
   EditorFrame

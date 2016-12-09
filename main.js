@@ -63,11 +63,6 @@ app.on('ready', () => {
     slashes: true
   }))
 
-  // Open the DevTools.
-  if (process.env.ENV === 'development') {
-    mainWindow.webContents.openDevTools()
-  }
-
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
@@ -120,4 +115,20 @@ ipcMain.on('open-file', (event, filePath) => {
       event.sender.send('file-opened', data)
     }
   })
+})
+
+ipcMain.on('app-ready', (event) => {
+  if (process.env.ENV === 'development') {
+    mainWindow.webContents.openDevTools()
+
+    const selectedDirs = ['/Users/sgood/Projects/Personal/stevegood.rocks']
+    let selectedDir = ''
+    let contentTree = {}
+    if (selectedDirs && selectedDirs.length === 1) {
+      selectedDir = selectedDirs[0]
+      contentTree = dirTree(`${selectedDir}/content`)
+    }
+
+    event.sender.send('project-directory-selected', selectedDir, contentTree)
+  }
 })

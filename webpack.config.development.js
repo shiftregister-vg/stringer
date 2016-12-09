@@ -1,5 +1,7 @@
-var webpack = require('webpack');
-var webpackTargetElectronRenderer = require('webpack-target-electron-renderer');
+var webpack = require('webpack')
+var webpackTargetElectronRenderer = require('webpack-target-electron-renderer')
+var nodeExternals = require('webpack-node-externals')
+
 var config = {
   entry: [
     'webpack-hot-middleware/client?reload=true&path=http://localhost:9000/__webpack_hmr',
