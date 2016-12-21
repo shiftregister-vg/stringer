@@ -26,6 +26,10 @@ const registerGlobalShortcuts = (win) => {
   })
 }
 
+const unregisterGlobalShortcuts = () => {
+  globalShortcut.unregisterAll()
+}
+
 const selectProjectDirectory = (win) => {
   dialog.showOpenDialog(win, {properties: ['openDirectory']}, (selectedDirs) => {
     let selectedDir = ''
@@ -39,10 +43,6 @@ const selectProjectDirectory = (win) => {
   })
 }
 
-const unregisterGlobalShortcuts = () => {
-  globalShortcut.unregisterAll()
-}
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -53,8 +53,6 @@ let mainWindow
 app.on('ready', () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1024, height: 800})
-
-  registerGlobalShortcuts(mainWindow)
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -92,6 +90,9 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+app.on('browser-window-focus', () => registerGlobalShortcuts(mainWindow))
+app.on('browser-window-blur', () => unregisterGlobalShortcuts())
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

@@ -3,12 +3,12 @@ export const styles = {
     position: 'absolute',
     top: 7,
     right: 7,
-    left: 314,
+    left: 214,
     bottom: 7
   },
   toolbar: {
     position: 'fixed',
-    left: 314,
+    left: 214,
     right: 7,
     zIndex: 99
   },
@@ -22,7 +22,7 @@ export const styles = {
   },
   editor: {
     position: 'absolute',
-    top: 157,
+    top: 207,
     bottom: 0,
     right: 0,
     left: 0,
@@ -30,7 +30,7 @@ export const styles = {
     overflow: 'auto'
   },
   metadataContainer: {
-    height: 150,
+    height: 200,
     position: 'relative',
     top: 0,
     right: 0,

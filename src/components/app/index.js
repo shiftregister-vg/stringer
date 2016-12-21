@@ -12,6 +12,7 @@ import Logo from '../logo'
 import { MainLeftDrawer } from '../navigation'
 import NewFileDialog from '../new-file-dialog'
 import { EditorFrame } from '../editor'
+import { preProcessMarkdown } from '../../markdown'
 
 const styles = {
   app: {
@@ -20,7 +21,8 @@ const styles = {
     right: 0,
     bottom: 0,
     left:0,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    backgroundColor: '#21252B'
   },
   appBar: {
     position: 'fixed'
@@ -149,7 +151,7 @@ export default class App extends React.Component {
     if (isYaml) {
       const contentParts = openFileContents.split('---')
       contentMetaData = YAML.parse(contentParts[1])
-      openFileContents = contentParts[2]
+      openFileContents = preProcessMarkdown(this.state.project.path, contentParts[2])
     }
 
     let content = stateFromHTML(marked(openFileContents))

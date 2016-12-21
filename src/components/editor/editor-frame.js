@@ -24,12 +24,11 @@ const EditorFrame = (props) => {
 
   return (
     <div style={editorFrameStyles.frame}>
-      <Paper style={editorFrameStyles.fileTree} zDepth={3}>
+      <div style={editorFrameStyles.fileTree}>
         <Treebeard
           data={project.contentTree}
-          style={editorFrameStyles.treebeard}
           onToggle={onToggle} />
-      </Paper>
+      </div>
 
       <ContentEditor
         editorState={editorState}

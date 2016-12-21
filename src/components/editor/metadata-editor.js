@@ -33,12 +33,12 @@ export const MetadataEditor = (props) => {
   return (
     <Paper style={styles.metadataContainer} zDepth={3}>
       <TextField
-        hintText='Title'
+        floatingLabelText='Title'
         fullWidth
         value={title} />
       <div style={styles.rowTwoMeta}>
         <TextField
-          hintText='Description (optional)'
+          floatingLabelText='Description (optional)'
           fullWidth
           value={description || ''} />
       </div>

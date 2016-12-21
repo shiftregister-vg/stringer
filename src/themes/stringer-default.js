@@ -10,7 +10,7 @@ export default {
   spacing: spacing,
   fontFamily: 'Roboto, sans-serif',
   palette: {
-    primary1Color: grey900,
+    primary1Color: fullBlack,
     primary2Color: grey700,
     primary3Color: grey400,
     accent1Color: '#00ADF7',
